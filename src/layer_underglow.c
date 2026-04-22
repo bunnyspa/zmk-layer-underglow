@@ -11,8 +11,6 @@
 
 LOG_MODULE_REGISTER(layer_underglow, CONFIG_ZMK_LOG_LEVEL);
 
-static const uint32_t default_state[] = DT_INST_PROP(0, default_state);
-
 #if DT_INST_NODE_HAS_PROP(0, layer_entries)
 static const uint32_t layer_entries[] = DT_INST_PROP(0, layer_entries);
 #define LAYER_ENTRIES_LEN ARRAY_SIZE(layer_entries)
@@ -27,7 +25,10 @@ static void apply_state(uint32_t effect, uint32_t h, uint32_t s, uint32_t b) {
 }
 
 static void apply_default(void) {
-    apply_state(default_state[0], default_state[1], default_state[2], default_state[3]);
+    apply_state(CONFIG_ZMK_RGB_UNDERGLOW_EFF_START,
+                CONFIG_ZMK_RGB_UNDERGLOW_HUE_START,
+                CONFIG_ZMK_RGB_UNDERGLOW_SAT_START,
+                CONFIG_ZMK_RGB_UNDERGLOW_BRT_START);
 }
 
 static int layer_underglow_listener(const zmk_event_t *eh) {
