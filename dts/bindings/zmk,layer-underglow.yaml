@@ -1,0 +1,34 @@
+description: |
+  Sets RGB underglow color and effect based on which keymap layer is active.
+  On each layer change, checks layer-entries for an active layer and applies
+  the matching state. Falls back to default-state when no entry matches.
+
+  A state is (effect H S B): effect index selects the animation, H/S/B set
+  the color used by that effect. For spectrum and swirl, H/S/B are ignored.
+
+  Effect indices: 0=solid, 1=breathe, 2=spectrum, 3=swirl.
+
+  Example:
+    / {
+        layer_underglow: layer_underglow {
+            compatible = "zmk,layer-underglow";
+            default-state = <0 0 0 40>;
+            layer-entries = <1 0 240 100 40
+                             2 1   0 100 40>;
+        };
+    };
+
+  layer-entries is a flat array of (layer effect H S B) tuples.
+  Entries are checked from last to first; the first match wins,
+  so list layers in ascending priority order.
+
+compatible: "zmk,layer-underglow"
+
+properties:
+  default-state:
+    type: array
+    required: true
+    description: "Default state [effect H S B] when no layer-entries match"
+  layer-entries:
+    type: array
+    description: "Flat array of [layer effect H S B] tuples. See https://zmk.dev/docs/config/lighting for effect indices."
