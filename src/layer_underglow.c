@@ -14,6 +14,7 @@ LOG_MODULE_REGISTER(layer_underglow, CONFIG_ZMK_LOG_LEVEL);
 #if DT_INST_NODE_HAS_PROP(0, layer_entries)
 static const uint32_t layer_entries[] = DT_INST_PROP(0, layer_entries);
 #define LAYER_ENTRIES_LEN ARRAY_SIZE(layer_entries)
+BUILD_ASSERT(LAYER_ENTRIES_LEN % 5 == 0, "layer-entries must contain complete (layer effect H S B) tuples");
 #else
 static const uint32_t layer_entries[] = {};
 #define LAYER_ENTRIES_LEN 0
@@ -32,8 +33,11 @@ static void apply_default(void) {
 }
 
 static int layer_underglow_listener(const zmk_event_t *eh) {
-    for (int i = LAYER_ENTRIES_LEN - 5; i >= 0; i -= 5) {
+    for (int i = (LAYER_ENTRIES_LEN / 5 - 1) * 5; i >= 0; i -= 5) {
         if (zmk_keymap_layer_active(layer_entries[i])) {
+            LOG_DBG("Layer %d active, applying effect=%d h=%d s=%d b=%d",
+                    layer_entries[i], layer_entries[i + 1],
+                    layer_entries[i + 2], layer_entries[i + 3], layer_entries[i + 4]);
             apply_state(layer_entries[i + 1], layer_entries[i + 2],
                         layer_entries[i + 3], layer_entries[i + 4]);
             return ZMK_EV_EVENT_BUBBLE;
