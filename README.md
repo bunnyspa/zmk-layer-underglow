@@ -4,7 +4,9 @@ A [ZMK](https://zmk.dev) module that changes RGB underglow color and effect base
 
 **On split keyboards, runs on the central half only.**
 
-## `config/west.yml`
+## Getting Started
+
+### `config/west.yml`
 
 ```yaml
 manifest:
@@ -29,7 +31,7 @@ manifest:
     path: config
 ```
 
-## `<keyboard>.conf`
+### `<keyboard>.conf`
 
 ```ini
 CONFIG_ZMK_RGB_UNDERGLOW=y
@@ -42,27 +44,28 @@ CONFIG_ZMK_RGB_UNDERGLOW_SAT_START=0
 CONFIG_ZMK_RGB_UNDERGLOW_BRT_START=50
 ```
 
-## Usage
+### `<keyboard>.overlay` / `<keyboard>.dtsi`
 
-Add the following to your `<keyboard>.overlay` or `<keyboard>.dtsi` (central half only if split).
-
-A state is `(effect H S B)`. For effect indices see [ZMK lighting config](https://zmk.dev/docs/config/lighting). For spectrum and swirl, H/S/B are ignored.
+> [!NOTE]
+> **Split keyboards:** Place this in the central half's overlay only (e.g. `<keyboard>_left.overlay`), not in a shared `.overlay` or `.dtsi`.
 
 ```c
-/ {
-    layer_underglow: layer_underglow {
-        compatible = "zmk,layer-underglow";
-        layer-entries = <
-            // layer  eff    H    S   B
-               1      0    240  100  50  // solid blue  (lower priority)
-               2      1      0  100  50  // breathe red (higher priority)
-        >;
-    };
+#include <zmk/layer_underglow.dtsi>
+
+&layer_underglow {
+    layer-entries = <
+        // layer  eff    H    S   B
+           1      0    240  100  50
+           2      1      0  100  50
+    >;
 };
 ```
 
-**`layer-entries`** — flat array of `(layer effect H S B)` tuples. Entries are checked from last to first; the first match wins, so list layers in ascending priority order. When no entry matches, applies `CONFIG_ZMK_RGB_UNDERGLOW_*_START`.
+## Parameters
 
-## How it works
+**`layer-entries`** — flat array of `(layer effect H S B)` tuples.
 
-The module subscribes to `zmk_layer_state_changed` events. On each event it checks `layer-entries` for an active layer and applies the matching state. If no entry matches, it applies `CONFIG_ZMK_RGB_UNDERGLOW_*_START`. On split keyboards the listener only compiles for the central half (`ZMK_SPLIT_ROLE_CENTRAL`), so the peripheral half is unaffected.
+- Entries are checked from last to first; the first match wins — list layers in ascending priority order.
+- When no entry matches, applies `CONFIG_ZMK_RGB_UNDERGLOW_*_START`.
+- For effect indices see [ZMK lighting config](https://zmk.dev/docs/config/lighting). For spectrum and swirl effects, H/S/B are ignored.
+

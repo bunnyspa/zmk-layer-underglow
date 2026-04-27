@@ -1,0 +1,5 @@
+/ {
+    layer_underglow: layer_underglow {
+        compatible = "zmk,layer-underglow";
+    };
+};
