@@ -47,7 +47,7 @@ CONFIG_ZMK_RGB_UNDERGLOW_BRT_START=50
 ### `<keyboard>.overlay` or `<keyboard>.dtsi`
 
 > [!NOTE]
-> **Split keyboards:** Place this in the central half's overlay only (e.g. `<keyboard>_left.overlay`), not in a shared `.overlay` or `.dtsi`.
+> **Split keyboards:** Place this in the central half's overlay only (i.e. `<keyboard>_<central>.overlay`), not in a shared `.overlay` or `.dtsi`.
 
 ```c
 #include <zmk/layer_underglow.dtsi>
